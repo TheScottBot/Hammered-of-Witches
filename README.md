@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/icon.png" width="160" alt="Hammered of Witches: a flaming hammer in a witch's hat"></p>
+<p align="center"><img src="assets/banner.png" alt="Hammered of Witches: a flaming hammer in a witch's hat. Discord bot for witch-finding advice"></p>
 
 # Hammered of Witches
 
