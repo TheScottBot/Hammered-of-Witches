@@ -1,0 +1,24 @@
+# systemd service for Hammered of Witches, checked out at /opt/how and run as the "how" user.
+#   sudo cp /opt/how/deploy/how.service /etc/systemd/system/ && sudo systemctl daemon-reload
+#   sudo systemctl enable --now how      (logs: journalctl -u how -f)
+[Unit]
+Description=Hammered of Witches Discord bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=how
+WorkingDirectory=/opt/how
+ExecStart=/opt/how/.venv/bin/python /opt/how/bot.py
+Restart=on-failure
+RestartSec=10
+
+# It only needs to write its database and logs, in /opt/how.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/how
+
+[Install]
+WantedBy=multi-user.target

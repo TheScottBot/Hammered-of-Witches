@@ -1,0 +1,32 @@
+[project]
+name = "hammered-of-witches"
+version = "0.1.0"
+description = "Witch-finding advice from the Malleus Maleficarum (1486), filtered to each Discord server's taste"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "discord.py>=2.4",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+# Only for rebuilding hammered/data/malleus.json (python -m hammered.tools.malleus_build).
+build = ["wordfreq>=3"]
+
+[project.scripts]
+hammered = "hammered.bot:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["hammered*"]
+
+[tool.setuptools.package-data]
+"hammered" = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning:discord.*"]
