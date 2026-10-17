@@ -1,0 +1,14 @@
+.env
+.env.dev
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.idea/
+*.db
+logs/
+
+# OCR downloaded by python -m hammered.tools.malleus_build; only hammered/data/malleus.json is kept
+build/
