@@ -71,5 +71,6 @@ Witch-hunting advice from 1486, hammered into Discord. Real history, unhinged lo
 - `assets/icon.png` (1254 × 1254): app icon. Discord crops it to a circle.
 - `assets/banner.png` (1774 × 887, 2:1, with the tagline): the README header, GitHub's social preview (Settings →
   General → Social preview), and the site's link preview (`docs/banner.jpg`, 1280 × 640).
-- `assets/banner-flames.png` (1672 × 941, 16:9): the bot's profile banner (Bot page → Banner; Discord crops it to
-  roughly 17:6, so the middle band shows) and an App Directory screenshot.
+- `assets/discord-banner.png` (2111 × 745, about 17:6): the bot's profile banner (Bot page → Banner). Made for
+  Discord's banner shape, so nothing important is cropped.
+- `assets/banner-flames.png` (1672 × 941, 16:9): an App Directory screenshot, or a banner anywhere 16:9.
