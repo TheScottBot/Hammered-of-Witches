@@ -73,4 +73,6 @@ Witch-hunting advice from 1486, hammered into Discord. Real history, unhinged lo
   General → Social preview), and the site's link preview (`docs/banner.jpg`, 1280 × 640).
 - `assets/discord-banner.png` (2111 × 745, about 17:6): the bot's profile banner (Bot page → Banner). Made for
   Discord's banner shape, so nothing important is cropped.
-- `assets/banner-flames.png` (1672 × 941, 16:9): an App Directory screenshot, or a banner anywhere 16:9.
+- `assets/rich-presence.png` (1672 × 941, 16:9, with the tagline): the Rich Presence invite image (Rich Presence →
+  Art Assets), the support server's banner and invite splash, and the first App Directory screenshot.
+- `assets/banner-flames.png` (1672 × 941, 16:9): a spare 16:9 banner or screenshot.
