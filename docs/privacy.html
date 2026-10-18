@@ -13,7 +13,7 @@
 <main>
   <p><a href="./">← Hammered of Witches</a></p>
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated 17 October 2026</p>
+  <p class="updated">Last updated 18 October 2026</p>
 
   <p>The short version: the bot doesn't store anything about you.</p>
 
@@ -32,10 +32,12 @@
   <ul>
     <li>the server's ID;</li>
     <li>its filter levels (for example, "gore: mild");</li>
+    <li>the IDs of any channels given filters of their own with <code>/setup here</code>, and those filters;</li>
     <li>the IDs of any passages it has hidden.</li>
   </ul>
   <p>These are deleted when a server admin runs <code>/setup reset</code>, or when the bot is removed from the
-    server.</p>
+    server. A channel's filters are also deleted by <code>/setup here reset</code>, or when the channel is
+    deleted.</p>
 
   <h2>While it's running</h2>
   <p>Discord sends the bot what it needs to answer a command: the command, its options, and the server, channel and

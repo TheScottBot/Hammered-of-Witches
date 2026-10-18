@@ -64,6 +64,10 @@ class HammeredBot(discord.Client):
         db.forget(guild.id)  # Removed from a server: its filters and hidden passages go too (docs/privacy.html).
         log.info("Removed from server %s; forgot its settings", guild.id)
 
+    async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
+        if db.forget_channel(channel.id):  # A deleted channel's own filters go with it.
+            log.info("Channel %s deleted; forgot its filters", channel.id)
+
     async def on_app_command_completion(self, interaction: discord.Interaction, command):
         # Which command ran, and in which server: never who ran it, or what they searched for (see docs/privacy.html).
         log.info("[%s] /%s", interaction.guild_id or "DM", command.qualified_name)

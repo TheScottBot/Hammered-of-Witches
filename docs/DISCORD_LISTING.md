@@ -42,6 +42,8 @@ This bot quotes it, from Montague Summers' 1928 translation, with a link to each
 
 The book is soaked in misogyny, torture, antisemitism and worse. Instead of cutting it for everyone, every passage is tagged, and each server picks what to keep, per category: **off**, **mild** or **full**. Use `/setup lgbt level:off` for an LGBTQ+-friendly server, `/setup gore level:mild` to tone down the torture, or one preset from 🕊️ **Tame** to 🔥 **Unabridged**. Keep the bird's-nest lore, lose the bigotry. New servers start on ⚖️ **Tasteful**.
 
+Want the full horror without inflicting it on everyone? `/setup here` gives one channel its own rules: an Unabridged channel people can mute, while the rest of the server stays Tame.
+
 **Privacy**
 
 No messages read, no user data stored. Only each server's filter choices, deleted when the bot leaves.

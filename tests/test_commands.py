@@ -1,13 +1,14 @@
 """The slash commands (hammered/commands.py), run against fake interactions, and their registration."""
 
 import re
+import types
 
 import discord
 import pytest
 
 from hammered import commands, content, db, malleus
 from hammered.bot import HammeredBot
-from tests.fakes import Guild, Interaction, User, run
+from tests.fakes import Guild, Interaction, Thread, User, run
 
 
 def choice(value, name="x"):
@@ -37,7 +38,7 @@ def test_hammered_says_why_theres_nothing():
     db.set_limits(111, content.every(content.OFF))
     interaction = Interaction()
     run(commands.hammered_command.callback(interaction, about="copulate"))
-    assert interaction.last.ephemeral and "not that this server's filters allow" in interaction.last.content
+    assert interaction.last.ephemeral and "not that the filters here allow" in interaction.last.content
     run(commands.hammered_command.callback(interaction, about="zzyzx"))
     assert "has nothing on **zzyzx**" in interaction.last.content
 
@@ -142,3 +143,85 @@ def test_leaving_a_server_forgets_it():
     db.hide(111, "abc123")
     run(HammeredBot().on_guild_remove(Guild(111)))
     assert db.limits(111) == content.DEFAULT.limits and db.hidden(111) == set()
+
+
+def here_command(name):
+    return commands.here.get_command(name)
+
+
+def footer_ids(interaction, times=30):
+    """The passages /hammered posts here, over a few goes."""
+    ids = set()
+    for _ in range(times):
+        run(commands.hammered_command.callback(interaction))
+        ids.add(interaction.last.embed.footer.text.rsplit("#", 1)[1])
+    return ids
+
+
+def test_setup_here_gives_one_channel_its_own_filters():
+    grim = Interaction(channel_id=666)
+    run(here_command("preset").callback(grim, preset=choice("unabridged")))
+    assert db.limits(111, 666) == content.every(content.FULL)
+    assert db.limits(111, 500) == content.DEFAULT.limits and db.limits(111) == content.DEFAULT.limits
+    assert "allows more than the rest of the server" in grim.last.content  # The tip to say so in its topic
+    assert "**Preset:** 🔥 Unabridged" in grim.last.embed.description
+
+    # The grim channel gets the torture; the rest of the server doesn't.
+    run(commands.hammered_command.callback(grim, about="tortured"))
+    assert "tortured" in grim.last.embed.description
+    elsewhere = Interaction()
+    run(commands.hammered_command.callback(elsewhere, about="tortured"))
+    assert elsewhere.last.embed is None and "not that the filters here allow" in elsewhere.last.content
+    assert all(content.allowed(malleus.BY_ID[i].tags, content.DEFAULT.limits) for i in footer_ids(elsewhere))
+
+
+def test_a_channel_follows_the_server_for_what_it_doesnt_set():
+    run(here_command("gore").callback(Interaction(channel_id=666), level=choice(content.FULL)))
+    assert db.channel_levels(666) == {"gore": content.FULL}
+    run(subcommand("lgbt").callback(Interaction(), level=choice(content.FULL)))
+    assert db.limits(111, 666)["lgbt"] == content.FULL  # The server's change reaches the channel
+    run(subcommand("gore").callback(Interaction(), level=choice(content.OFF)))
+    assert db.limits(111, 666)["gore"] == content.FULL  # But not over what the channel set itself
+    interaction = Interaction(channel_id=666)
+    run(here_command("show").callback(interaction))
+    fields = {f.name: f.value for f in interaction.last.embed.fields}
+    assert fields["🩸 Torture & violence"].startswith("🔥 full · set here")
+    assert fields["🍼 Harm to children"] == "🚫 off · the server's"
+
+
+def test_a_stricter_channel_gets_no_tip():
+    interaction = Interaction(channel_id=777)
+    run(here_command("preset").callback(interaction, preset=choice("tame")))
+    assert "allows more" not in interaction.last.content
+
+
+def test_threads_follow_their_channel():
+    run(here_command("preset").callback(Interaction(channel_id=666), preset=choice("tame")))
+    in_thread = Interaction(thread=Thread(9001, parent_id=666))
+    assert commands.channel_of(in_thread) == 666
+    assert all(not malleus.BY_ID[i].tags for i in footer_ids(in_thread))
+
+
+def test_setup_here_reset_and_the_server_overview():
+    run(here_command("preset").callback(Interaction(channel_id=666), preset=choice("unabridged")))
+    run(here_command("sex").callback(Interaction(channel_id=667), level=choice(content.OFF)))
+    interaction = Interaction()
+    run(subcommand("show").callback(interaction))
+    overview = interaction.last.embed.fields[-1]
+    assert overview.name == "Channels with filters of their own"
+    assert overview.value == "<#666>: 🔥 Unabridged\n<#667>: custom"
+
+    reset = Interaction(channel_id=666)
+    run(here_command("reset").callback(reset))
+    assert "follows the server's filters again" in reset.last.content and db.channel_levels(666) == {}
+    run(here_command("reset").callback(reset))
+    assert "had no filters of its own" in reset.last.content
+
+    run(subcommand("reset").callback(Interaction()))  # The server's reset clears every channel too
+    assert db.channels(111) == {}
+
+
+def test_deleting_a_channel_forgets_its_filters():
+    db.set_channel_limits(111, 666, {"gore": content.FULL})
+    run(HammeredBot().on_guild_channel_delete(types.SimpleNamespace(id=666)))
+    assert db.channel_levels(666) == {}

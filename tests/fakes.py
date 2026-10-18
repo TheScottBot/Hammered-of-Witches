@@ -3,6 +3,8 @@
 import asyncio
 import types
 
+import discord
+
 
 def run(coro):
     return asyncio.run(coro)
@@ -43,13 +45,23 @@ class Response:
         self.interaction.sent.append(Sent(content, embed, ephemeral, allowed_mentions))
 
 
-class Interaction:
-    """A slash command being run: in a server (guild given) or a DM (guild=None)."""
+class Thread(discord.Thread):
+    """A thread in a channel: real enough for isinstance(), with just its ids."""
 
-    def __init__(self, user: User | None = None, guild: Guild | None = "default"):
+    def __init__(self, tid: int, parent_id: int):
+        self.id, self.parent_id = tid, parent_id
+
+
+class Interaction:
+    """A slash command being run: in a server (guild given) or a DM (guild=None), in a channel or a thread."""
+
+    def __init__(self, user: User | None = None, guild: Guild | None = "default", channel_id: int = 500,
+                 thread: Thread | None = None):
         self.user = user or User(1, "scott")
         self.guild = Guild() if guild == "default" else guild
         self.guild_id = self.guild.id if self.guild else None
+        self.channel = thread or types.SimpleNamespace(id=channel_id)
+        self.channel_id = thread.id if thread else channel_id
         self.client = types.SimpleNamespace(user=User(999, "Hammered of Witches"))
         self.response = Response(self)
         self.sent: list[Sent] = []

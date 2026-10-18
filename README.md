@@ -26,11 +26,28 @@ antisemitism goes.
 | `/setup preset` | Every filter at once: 🕊️ Tame, ⚖️ Tasteful (the default), 🌶️ Spicy, 🔥 Unabridged |
 | `/setup <category> level:` | One filter: **off** (none of it), **mild** (passing mentions), **full** (anything) |
 | `/setup hide` / `unhide` | Hide one passage that slipped through, by the `#id` in its footer |
-| `/setup reset` | Back to the default, with nothing hidden |
+| `/setup reset` | Back to the default in every channel, with nothing hidden |
+| `/setup here …` | The same for just the channel you're in: `here show`, `here preset`, `here <category>`, `here reset` |
 | `/help` | The above, in Discord |
 
 `/setup` needs **Manage Server**. A server can change that under Server Settings → Integrations, and its replies
 are only visible to whoever ran it.
+
+### One channel, different rules
+
+`/setup here` gives the channel you're in filters of its own. That could be a `#the-grim-stuff` channel on
+Unabridged that people can mute, while the rest of the server stays Tame:
+
+```
+/setup preset preset:Tame                 (the whole server)
+/setup here preset preset:Unabridged      (in #the-grim-stuff)
+```
+
+A channel only overrides what it sets, and follows the server for everything else: after
+`/setup here gore level:full`, the server tightening `lgbt` still tightens that channel. Threads follow their
+channel, and hidden passages stay hidden everywhere. `/setup show` lists the channels with filters of their own;
+`/setup here reset` puts one back. When a channel is loosened past the server, the bot suggests saying so in the
+channel's topic.
 
 ### Filter categories
 
